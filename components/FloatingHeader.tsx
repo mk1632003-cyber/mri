@@ -9,9 +9,14 @@ export default function FloatingHeader() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const isPast = window.scrollY > 300;
-      setVisible(isPast);
-      if (!isPast) {
+      const scrollPos =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        window.pageYOffset ||
+        0;
+
+      setVisible(scrollPos > 450);
+      if (scrollPos <= 450) {
         setMenuOpen(false);
       }
     };
@@ -45,12 +50,12 @@ export default function FloatingHeader() {
             scale: 0.92,
           }}
           transition={{
-            duration: 0.5,
+            duration: 0.55,
             ease: [0.16, 1, 0.3, 1],
           }}
         >
           <div className="topRow">
-            <a href="#top" className="identity">
+            <a href="#" className="identity">
               <div className="avatar">
                 <img src="/images/profile.jpg" alt="Mritunjay Kumar" />
                 <span className="online" />
@@ -119,7 +124,7 @@ export default function FloatingHeader() {
               color: #fff;
               z-index: 99990;
               overflow: hidden;
-              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
               backdrop-filter: blur(18px);
               -webkit-backdrop-filter: blur(18px);
               transition:
@@ -150,8 +155,8 @@ export default function FloatingHeader() {
             }
 
             .avatar {
-              width: 58px;
-              height: 58px;
+              width: 60px;
+              height: 60px;
               position: relative;
               flex-shrink: 0;
               border-radius: 50%;
