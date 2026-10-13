@@ -26,6 +26,10 @@ export default function CustomCursor() {
       mouseX = event.clientX;
       mouseY = event.clientY;
       cursor.dataset.visible = "true";
+
+      const target = event.target as HTMLElement;
+      const insideProject = target.closest(".projectVisual");
+      cursor.dataset.project = insideProject ? "true" : "false";
     };
 
     const mouseLeave = () => {
