@@ -9,8 +9,9 @@ export default function FloatingHeader() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setVisible(window.scrollY > 450);
-      if (window.scrollY <= 450) {
+      const isPast = window.scrollY > 300;
+      setVisible(isPast);
+      if (!isPast) {
         setMenuOpen(false);
       }
     };
@@ -44,12 +45,12 @@ export default function FloatingHeader() {
             scale: 0.92,
           }}
           transition={{
-            duration: 0.55,
+            duration: 0.5,
             ease: [0.16, 1, 0.3, 1],
           }}
         >
           <div className="topRow">
-            <a href="#" className="identity">
+            <a href="#top" className="identity">
               <div className="avatar">
                 <img src="/images/profile.jpg" alt="Mritunjay Kumar" />
                 <span className="online" />
@@ -118,7 +119,7 @@ export default function FloatingHeader() {
               color: #fff;
               z-index: 99990;
               overflow: hidden;
-              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
               backdrop-filter: blur(18px);
               -webkit-backdrop-filter: blur(18px);
               transition:
@@ -144,11 +145,13 @@ export default function FloatingHeader() {
               display: flex;
               align-items: center;
               gap: 14px;
+              text-decoration: none;
+              color: inherit;
             }
 
             .avatar {
-              width: 60px;
-              height: 60px;
+              width: 58px;
+              height: 58px;
               position: relative;
               flex-shrink: 0;
               border-radius: 50%;
@@ -229,6 +232,8 @@ export default function FloatingHeader() {
               font-family: var(--font-space);
               font-size: 22px;
               letter-spacing: -0.03em;
+              text-decoration: none;
+              color: inherit;
               transition: padding-left 0.3s ease;
             }
 

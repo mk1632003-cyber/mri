@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Mail, Menu, X } from "lucide-react";
 
@@ -45,112 +45,145 @@ function LinkedinIcon({ size = 16 }: { size?: number }) {
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isPast = window.scrollY > 300;
+      setScrolled(isPast);
+      if (isPast) {
+        setMobileOpen(false);
+      }
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="pill-navbar-wrapper">
-      <div className="pill-navbar">
-        {/* Brand / Avatar */}
-        <a href="#top" className="nav-brand" aria-label="Mritunjay Kumar">
-          <span className="avatar-wrap">
-            <img
-              src="/images/profile.jpg"
-              alt="Mritunjay Kumar"
-              className="nav-avatar"
-            />
-            <span className="dot-loop" />
-          </span>
-          <span className="nav-name">
-            Mritunjay Kumar<span className="nav-dot-accent">.</span>
-          </span>
-        </a>
-
-        {/* Desktop Links */}
-        <div className="nav-desktop">
-          <nav className="nav-links-menu">
-            <a href="#work" className="nav-item">
-              Work
-              <span className="nav-hover-line" />
-            </a>
-            <a href="#playground" className="nav-item">
-              Playground
-              <span className="nav-hover-line" />
-            </a>
-            <a href="#web" className="nav-item">
-              Web
-              <span className="nav-hover-line" />
-            </a>
-            <a href="#about" className="nav-item">
-              About
-              <span className="nav-hover-line" />
-            </a>
-          </nav>
-
-          <span className="nav-divider" aria-hidden="true" />
-
-          {/* Social Icons */}
-          <div className="nav-socials">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="social-btn"
-            >
-              <GithubIcon size={16} />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="social-btn"
-            >
-              <LinkedinIcon size={16} />
-            </a>
-            <a
-              href="mailto:mk1632003@gmail.com"
-              aria-label="Email"
-              className="social-btn"
-            >
-              <Mail size={16} />
-            </a>
-          </div>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          type="button"
-          className="mobile-toggle"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
+    <AnimatePresence>
+      {!scrolled && (
+        <motion.header
+          className="pill-navbar-wrapper"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -30, opacity: 0 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         >
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
+          <div className="pill-navbar">
+            {/* Brand / Avatar */}
+            <a href="#top" className="nav-brand" aria-label="Mritunjay Kumar">
+              <span className="avatar-wrap">
+                <img
+                  src="/images/profile.jpg"
+                  alt="Mritunjay Kumar"
+                  className="nav-avatar"
+                />
+                <span className="dot-loop" />
+              </span>
+              <span className="nav-name">
+                Mritunjay Kumar<span className="nav-dot-accent">.</span>
+              </span>
+            </a>
 
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            className="mobile-drawer"
-            initial={{ opacity: 0, y: -15, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -15, scale: 0.96 }}
-            transition={{ duration: 0.25 }}
-          >
-            <nav className="mobile-nav-links">
-              <a href="#work" onClick={() => setMobileOpen(false)}>Work</a>
-              <a href="#playground" onClick={() => setMobileOpen(false)}>Playground</a>
-              <a href="#web" onClick={() => setMobileOpen(false)}>Web</a>
-              <a href="#about" onClick={() => setMobileOpen(false)}>About</a>
-            </nav>
+            {/* Desktop Links */}
+            <div className="nav-desktop">
+              <nav className="nav-links-menu">
+                <a href="#work" className="nav-item">
+                  Work
+                  <span className="nav-hover-line" />
+                </a>
+                <a href="#playground" className="nav-item">
+                  Playground
+                  <span className="nav-hover-line" />
+                </a>
+                <a href="#web" className="nav-item">
+                  Web
+                  <span className="nav-hover-line" />
+                </a>
+                <a href="#about" className="nav-item">
+                  About
+                  <span className="nav-hover-line" />
+                </a>
+              </nav>
 
-            <div className="mobile-socials">
-              <a href="mailto:mk1632003@gmail.com">mk1632003@gmail.com</a>
+              <span className="nav-divider" aria-hidden="true" />
+
+              {/* Social Icons */}
+              <div className="nav-socials">
+                <a
+                  href="https://github.com/mk1632003-cyber"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="GitHub"
+                  className="social-btn"
+                >
+                  <GithubIcon size={16} />
+                </a>
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn"
+                  className="social-btn"
+                >
+                  <LinkedinIcon size={16} />
+                </a>
+                <a
+                  href="mailto:mk1632003@gmail.com"
+                  aria-label="Email"
+                  className="social-btn"
+                >
+                  <Mail size={16} />
+                </a>
+              </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+
+            {/* Mobile Menu Button */}
+            <button
+              type="button"
+              className="mobile-toggle"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+
+          {/* Mobile Drawer */}
+          <AnimatePresence>
+            {mobileOpen && (
+              <motion.div
+                className="mobile-drawer"
+                initial={{ opacity: 0, y: -15, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -15, scale: 0.96 }}
+                transition={{ duration: 0.25 }}
+              >
+                <nav className="mobile-nav-links">
+                  <a href="#work" onClick={() => setMobileOpen(false)}>
+                    Work
+                  </a>
+                  <a href="#playground" onClick={() => setMobileOpen(false)}>
+                    Playground
+                  </a>
+                  <a href="#web" onClick={() => setMobileOpen(false)}>
+                    Web
+                  </a>
+                  <a href="#about" onClick={() => setMobileOpen(false)}>
+                    About
+                  </a>
+                </nav>
+
+                <div className="mobile-socials">
+                  <a href="mailto:mk1632003@gmail.com">mk1632003@gmail.com</a>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.header>
+      )}
+    </AnimatePresence>
   );
 }
