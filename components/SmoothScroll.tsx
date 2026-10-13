@@ -5,24 +5,28 @@ import Lenis from "lenis";
 
 export default function SmoothScroll() {
   useEffect(() => {
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (reducedMotion) return;
+
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.15,
       smoothWheel: true,
       wheelMultiplier: 0.9,
-      touchMultiplier: 1.2,
+      touchMultiplier: 1,
     });
 
-    let frame: number;
-
-    function raf(time: number) {
+    let rafId = 0;
+    const raf = (time: number) => {
       lenis.raf(time);
-      frame = requestAnimationFrame(raf);
-    }
+      rafId = requestAnimationFrame(raf);
+    };
 
-    frame = requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);

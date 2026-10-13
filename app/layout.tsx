@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
-import Navbar from "@/components/Navbar";
-import FloatingHeader from "@/components/FloatingHeader";
 import "./globals.css";
 
 const inter = Inter({
@@ -17,9 +15,8 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Mritunjay Kumar — Creative Developer & Technologist",
-  description:
-    "Portfolio of Mritunjay Kumar — creative developer, digital designer, and technologist building seamless digital experiences.",
+  title: "Mritunjay Kumar — Portfolio",
+  description: "Portfolio of Mritunjay Kumar",
 };
 
 export default function RootLayout({
@@ -32,8 +29,6 @@ export default function RootLayout({
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <SmoothScroll />
         <CustomCursor />
-        <Navbar />
-        <FloatingHeader />
         {children}
       </body>
     </html>

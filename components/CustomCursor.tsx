@@ -9,39 +9,72 @@ export default function CustomCursor() {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    let mouseX = -100;
-    let mouseY = -100;
-    let cursorX = -100;
-    let cursorY = -100;
-    let frame: number;
+    if (
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
 
-    const moveMouse = (event: MouseEvent) => {
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let cursorX = mouseX;
+    let cursorY = mouseY;
+    let frame = 0;
+
+    const mouseMove = (event: MouseEvent) => {
       mouseX = event.clientX;
       mouseY = event.clientY;
+      cursor.dataset.visible = "true";
     };
 
-    const animate = () => {
-      // Smooth delayed movement
-      cursorX += (mouseX - cursorX) * 0.18;
-      cursorY += (mouseY - cursorY) * 0.18;
-
-      cursor.style.transform = `translate3d(
-        ${cursorX}px,
-        ${cursorY}px,
-        0
-      ) translate(-50%, -50%)`;
-
-      frame = requestAnimationFrame(animate);
+    const mouseLeave = () => {
+      cursor.dataset.visible = "false";
     };
 
-    window.addEventListener("mousemove", moveMouse);
-    frame = requestAnimationFrame(animate);
+    const mouseEnter = () => {
+      cursor.dataset.visible = "true";
+    };
+
+    const render = () => {
+      /*
+       * Lower number = more delayed
+       * Higher number = follows mouse faster
+       */
+      cursorX += (mouseX - cursorX) * 0.2;
+      cursorY += (mouseY - cursorY) * 0.2;
+
+      cursor.style.transform = `
+        translate3d(
+          ${cursorX}px,
+          ${cursorY}px,
+          0
+        )
+        translate(-50%, -50%)
+      `;
+
+      frame = requestAnimationFrame(render);
+    };
+
+    window.addEventListener("mousemove", mouseMove);
+    document.addEventListener("mouseleave", mouseLeave);
+    document.addEventListener("mouseenter", mouseEnter);
+    frame = requestAnimationFrame(render);
 
     return () => {
-      window.removeEventListener("mousemove", moveMouse);
+      window.removeEventListener("mousemove", mouseMove);
+      document.removeEventListener("mouseleave", mouseLeave);
+      document.removeEventListener("mouseenter", mouseEnter);
       cancelAnimationFrame(frame);
     };
   }, []);
 
-  return <div ref={cursorRef} className="custom-cursor" />;
+  return (
+    <div
+      ref={cursorRef}
+      className="siteCursor"
+      data-visible="false"
+      aria-hidden="true"
+    />
+  );
 }
