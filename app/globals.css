@@ -85,67 +85,7 @@ textarea {
   padding: 25px 0 30px;
 }
 
-.nav {
-  height: 50px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-}
 
-.logo {
-  font-family: var(--font-space), sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.06em;
-}
-
-.logo span {
-  color: #777;
-}
-
-.navCenter {
-  justify-self: center;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-}
-
-.statusDot {
-  width: 7px;
-  height: 7px;
-  background: #3a9c4d;
-  border-radius: 100%;
-}
-
-.navLinks {
-  justify-self: end;
-  display: flex;
-  gap: 32px;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.navLinks a {
-  position: relative;
-}
-
-.navLinks a::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 1px;
-  left: 0;
-  bottom: -5px;
-  background: #111;
-  transition: width 0.3s;
-}
-
-.navLinks a:hover::after {
-  width: 100%;
-}
 
 .heroInfo {
   margin-top: clamp(40px, 6vh, 90px);
