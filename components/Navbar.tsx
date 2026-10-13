@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Mail, Menu, X } from "lucide-react";
 
@@ -45,13 +45,13 @@ function LinkedinIcon({ size = 16 }: { size?: number }) {
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolledPast, setScrolledPast] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const isPast = window.scrollY > 300;
-      setScrolled(isPast);
-      if (isPast) {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setScrolledPast(scrollY > 350);
+      if (scrollY > 350) {
         setMobileOpen(false);
       }
     };
@@ -63,13 +63,13 @@ export default function Navbar() {
 
   return (
     <AnimatePresence>
-      {!scrolled && (
+      {!scrolledPast && (
         <motion.header
           className="pill-navbar-wrapper"
-          initial={{ y: -20, opacity: 0 }}
+          initial={{ y: -40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -30, opacity: 0 }}
-          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ y: -40, opacity: 0 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="pill-navbar">
             {/* Brand / Avatar */}
@@ -162,18 +162,10 @@ export default function Navbar() {
                 transition={{ duration: 0.25 }}
               >
                 <nav className="mobile-nav-links">
-                  <a href="#work" onClick={() => setMobileOpen(false)}>
-                    Work
-                  </a>
-                  <a href="#playground" onClick={() => setMobileOpen(false)}>
-                    Playground
-                  </a>
-                  <a href="#web" onClick={() => setMobileOpen(false)}>
-                    Web
-                  </a>
-                  <a href="#about" onClick={() => setMobileOpen(false)}>
-                    About
-                  </a>
+                  <a href="#work" onClick={() => setMobileOpen(false)}>Work</a>
+                  <a href="#playground" onClick={() => setMobileOpen(false)}>Playground</a>
+                  <a href="#web" onClick={() => setMobileOpen(false)}>Web</a>
+                  <a href="#about" onClick={() => setMobileOpen(false)}>About</a>
                 </nav>
 
                 <div className="mobile-socials">
