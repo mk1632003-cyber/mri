@@ -1,25 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function FloatingHeader() {
   const [visible, setVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-      setVisible(scrollY > 350);
-      if (scrollY <= 350) {
+      const currentScrollY = window.scrollY || document.documentElement.scrollTop;
+      const prevScrollY = lastScrollY.current;
+      const diff = currentScrollY - prevScrollY;
+
+      // 1. At the very top (hero zone <= 120px):
+      // Hide the floating pill so the initial top navbar is active
+      if (currentScrollY <= 120) {
+        setVisible(false);
         setMenuOpen(false);
       }
+      // 2. Hand-off zone (120px to 400px):
+      // Convert and display the compact floating pill as shown in the design
+      else if (currentScrollY > 120 && currentScrollY <= 400) {
+        setVisible(true);
+      }
+      // 3. If user opened the 3-dots menu, keep it visible
+      else if (menuOpen) {
+        setVisible(true);
+      }
+      // 4. Scrolling UP (> 400px):
+      // User is scrolling backwards / seeking navigation -> reveal pill instantly
+      else if (diff < -5) {
+        setVisible(true);
+      }
+      // 5. Scrolling DOWN (> 400px):
+      // User is actively reading content down the page -> hide pill to clear screen
+      else if (diff > 5) {
+        setVisible(false);
+      }
+
+      lastScrollY.current = currentScrollY;
     };
 
-    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [menuOpen]);
 
   return (
     <AnimatePresence>
@@ -27,10 +53,10 @@ export default function FloatingHeader() {
         <motion.header
           className={`floatingHeader ${menuOpen ? "open" : ""}`}
           initial={{
-            y: -100,
+            y: -80,
             x: "-50%",
             opacity: 0,
-            scale: 0.92,
+            scale: 0.94,
           }}
           animate={{
             y: 0,
@@ -39,26 +65,29 @@ export default function FloatingHeader() {
             scale: 1,
           }}
           exit={{
-            y: -100,
+            y: -80,
             x: "-50%",
             opacity: 0,
-            scale: 0.92,
+            scale: 0.94,
           }}
           transition={{
-            duration: 0.5,
+            duration: 0.45,
             ease: [0.16, 1, 0.3, 1],
           }}
         >
           <div className="topRow">
-            <a href="#top" className="identity">
+            {/* Identity / Avatar + Name */}
+            <a href="#top" className="identity" aria-label="Mritunjay Kumar">
               <div className="avatar">
                 <img src="/images/profile.jpg" alt="Mritunjay Kumar" />
                 <span className="online" />
               </div>
-              <span className="name"> Mritunjay Kumar. </span>
+              <span className="name">Mritunjay Kumar.</span>
             </a>
 
+            {/* Three Green Dots Toggle */}
             <button
+              type="button"
               className="menuButton"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle navigation"
@@ -70,6 +99,7 @@ export default function FloatingHeader() {
             </button>
           </div>
 
+          {/* Collapsible Navigation Menu */}
           <AnimatePresence>
             {menuOpen && (
               <motion.div
@@ -112,48 +142,49 @@ export default function FloatingHeader() {
               top: 18px;
               left: 50%;
               transform: translateX(-50%);
-              width: min(94%, 550px);
-              background: rgba(8, 8, 8, 0.94);
+              width: min(92vw, 490px);
+              background: rgba(10, 10, 12, 0.9);
               border: 1px solid rgba(255, 255, 255, 0.12);
-              border-radius: 100px;
+              border-radius: 9999px;
               color: #fff;
               z-index: 99990;
               overflow: hidden;
-              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-              backdrop-filter: blur(18px);
-              -webkit-backdrop-filter: blur(18px);
+              box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+              backdrop-filter: blur(20px);
+              -webkit-backdrop-filter: blur(20px);
               transition:
-                border-radius 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+                border-radius 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             .floatingHeader.open {
-              border-radius: 32px;
-              width: min(94%, 550px);
+              border-radius: 28px;
+              width: min(92vw, 490px);
             }
 
             .topRow {
-              height: 74px;
+              height: 58px;
               display: flex;
               align-items: center;
               justify-content: space-between;
-              padding: 7px 24px 7px 8px;
+              padding: 6px 18px 6px 8px;
             }
 
             /* IDENTITY */
             .identity {
               display: flex;
               align-items: center;
-              gap: 14px;
+              gap: 12px;
+              text-decoration: none;
+              color: inherit;
             }
 
             .avatar {
-              width: 60px;
-              height: 60px;
+              width: 44px;
+              height: 44px;
               position: relative;
               flex-shrink: 0;
               border-radius: 50%;
-              overflow: visible;
             }
 
             .avatar img {
@@ -162,54 +193,62 @@ export default function FloatingHeader() {
               display: block;
               object-fit: cover;
               border-radius: 50%;
+              border: 1.5px solid rgba(255, 255, 255, 0.2);
             }
 
             .online {
               position: absolute;
-              width: 10px;
-              height: 10px;
-              right: 1px;
-              bottom: 4px;
+              width: 9px;
+              height: 9px;
+              right: 0px;
+              bottom: 1px;
               border-radius: 50%;
               background: #5aaa17;
-              border: 2px solid #080808;
+              border: 2px solid #0a0a0c;
+              box-shadow: 0 0 8px rgba(90, 170, 23, 0.6);
             }
 
             .name {
-              font-family: var(--font-space);
-              font-size: 19px;
-              font-weight: 600;
-              letter-spacing: -0.04em;
+              font-family: var(--font-space), var(--font-inter), sans-serif;
+              font-size: 16px;
+              font-weight: 500;
+              letter-spacing: -0.02em;
+              color: #ffffff;
             }
 
-            /* THREE DOTS */
+            /* THREE GREEN DOTS */
             .menuButton {
               border: 0;
               background: transparent;
-              padding: 14px 0 14px 14px;
+              padding: 10px 4px 10px 14px;
               display: flex;
               align-items: center;
-              gap: 8px;
+              gap: 6px;
               cursor: pointer;
+              transition: opacity 0.2s ease;
+            }
+
+            .menuButton:hover {
+              opacity: 0.85;
             }
 
             .menuButton span {
-              width: 8px;
-              height: 8px;
+              width: 6.5px;
+              height: 6.5px;
               display: block;
               border-radius: 50%;
               background: #5aaa17;
               transition:
-                transform 0.3s ease,
-                opacity 0.3s ease;
+                transform 0.25s ease,
+                background-color 0.25s ease;
             }
 
             .menuButton:hover span:nth-child(1) {
-              transform: translateX(-3px);
+              transform: translateX(-2.5px);
             }
 
             .menuButton:hover span:nth-child(3) {
-              transform: translateX(3px);
+              transform: translateX(2.5px);
             }
 
             /* MENU */
@@ -218,28 +257,32 @@ export default function FloatingHeader() {
             }
 
             .menu nav {
-              padding: 5px 24px 25px;
+              padding: 4px 20px 20px;
             }
 
             .menu a {
               display: grid;
-              grid-template-columns: 45px 1fr;
+              grid-template-columns: 40px 1fr;
               align-items: center;
-              padding: 17px 4px;
-              border-top: 1px solid rgba(255, 255, 255, 0.15);
-              font-family: var(--font-space);
-              font-size: 22px;
-              letter-spacing: -0.03em;
-              transition: padding-left 0.3s ease;
+              padding: 14px 4px;
+              border-top: 1px solid rgba(255, 255, 255, 0.1);
+              font-family: var(--font-space), sans-serif;
+              font-size: 19px;
+              letter-spacing: -0.02em;
+              color: #fff;
+              transition:
+                padding-left 0.25s ease,
+                color 0.25s ease;
             }
 
             .menu a:hover {
-              padding-left: 10px;
+              padding-left: 8px;
+              color: #5aaa17;
             }
 
             .menu a span {
-              font-family: var(--font-inter);
-              font-size: 9px;
+              font-family: var(--font-inter), sans-serif;
+              font-size: 10px;
               color: rgba(255, 255, 255, 0.4);
               letter-spacing: 0.08em;
             }
@@ -252,39 +295,39 @@ export default function FloatingHeader() {
 
               .floatingHeader.open {
                 width: calc(100% - 24px);
-                border-radius: 25px;
+                border-radius: 24px;
               }
 
               .topRow {
-                height: 64px;
-                padding: 6px 19px 6px 6px;
+                height: 52px;
+                padding: 5px 14px 5px 6px;
               }
 
               .avatar {
-                width: 52px;
-                height: 52px;
+                width: 40px;
+                height: 40px;
               }
 
               .name {
-                font-size: 16px;
+                font-size: 15px;
               }
 
               .menuButton {
-                gap: 6px;
+                gap: 5px;
               }
 
               .menuButton span {
-                width: 7px;
-                height: 7px;
+                width: 6px;
+                height: 6px;
               }
 
               .menu nav {
-                padding: 5px 18px 20px;
+                padding: 4px 16px 18px;
               }
 
               .menu a {
-                font-size: 19px;
-                padding: 15px 3px;
+                font-size: 17px;
+                padding: 12px 2px;
               }
             }
           `}</style>

@@ -50,8 +50,8 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
-      setScrolledPast(scrollY > 350);
-      if (scrollY > 350) {
+      setScrolledPast(scrollY > 120);
+      if (scrollY > 120) {
         setMobileOpen(false);
       }
     };
