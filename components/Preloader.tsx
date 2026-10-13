@@ -1,81 +1,89 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
 
 export default function Preloader() {
-  const [count, setCount] = useState(0);
-  const [isDone, setIsDone] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user already saw preloader in this session
-    const hasSeen = sessionStorage.getItem("mk_preloader_seen");
-    if (hasSeen === "true") {
-      setIsDone(true);
-      return;
-    }
+    document.body.style.overflow = "hidden";
 
-    const interval = setInterval(() => {
-      setCount((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setIsDone(true);
-            sessionStorage.setItem("mk_preloader_seen", "true");
-          }, 350);
-          return 100;
-        }
-        return prev + Math.floor(Math.random() * 8) + 4;
-      });
-    }, 45);
+    const timer = window.setTimeout(() => {
+      setLoading(false);
+      document.body.style.overflow = "";
+    }, 1900);
 
-    return () => clearInterval(interval);
+    return () => {
+      window.clearTimeout(timer);
+      document.body.style.overflow = "";
+    };
   }, []);
 
   return (
     <AnimatePresence>
-      {!isDone && (
+      {loading && (
         <motion.div
-          className="preloader-root"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          className="preloader"
+          initial={{ y: 0 }}
+          exit={{
+            y: "-100%",
+            transition: {
+              duration: 0.9,
+              ease: [0.76, 0, 0.24, 1],
+            },
+          }}
         >
-          {/* 5 Vertical Curtain Panels */}
-          <div className="panels-wrap">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <motion.div
-                key={i}
-                className="panel"
-                initial={{ y: 0 }}
-                exit={{ y: "-100%" }}
-                transition={{
-                  duration: 0.85,
-                  delay: i * 0.08,
-                  ease: [0.76, 0, 0.24, 1],
-                }}
-              />
-            ))}
+          <div className="loaderTop">
+            <span>PORTFOLIO</span>
+            <span>© 2026</span>
           </div>
 
-          {/* Preloader typography content */}
-          <motion.div
-            className="preloader-content"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.3 } }}
-          >
-            <div className="preloader-counter">
-              <span>{Math.min(count, 100)}</span>%
+          <div className="loaderCenter">
+            <div className="loaderMask">
+              <motion.h2
+                initial={{ y: "110%" }}
+                animate={{ y: 0 }}
+                transition={{
+                  duration: 0.75,
+                  delay: 0.15,
+                  ease: [0.76, 0, 0.24, 1],
+                }}
+              >
+                MRITUNJAY
+              </motion.h2>
             </div>
 
-            <div className="preloader-word">
-              CREATIVE
+            <div className="loaderMask loaderRight">
+              <motion.h2
+                initial={{ y: "110%" }}
+                animate={{ y: 0 }}
+                transition={{
+                  duration: 0.75,
+                  delay: 0.27,
+                  ease: [0.76, 0, 0.24, 1],
+                }}
+              >
+                KUMAR
+              </motion.h2>
             </div>
+          </div>
 
-            <div className="preloader-sub">
-              MRITUNJAY KUMAR / 2026
+          <div className="loaderBottom">
+            <span>LOADING EXPERIENCE</span>
+
+            <div className="loaderLine">
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{
+                  duration: 1.35,
+                  delay: 0.15,
+                  ease: [0.65, 0, 0.35, 1],
+                }}
+              />
             </div>
-          </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

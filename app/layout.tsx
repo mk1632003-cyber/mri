@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
+import Preloader from "@/components/Preloader";
 import AnimatedHeader from "@/components/AnimatedHeader";
 import "./globals.css";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <SmoothScroll />
         <CustomCursor />
+        <Preloader />
         <AnimatedHeader />
         {children}
       </body>

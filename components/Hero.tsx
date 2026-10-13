@@ -1,11 +1,16 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowDown } from "lucide-react";
 
 const heroEase = [0.76, 0, 0.24, 1] as const;
 
 export default function Hero() {
+  const { scrollY } = useScroll();
+
+  const heroNameY = useTransform(scrollY, [0, 700], [0, 120]);
+  const heroOpacity = useTransform(scrollY, [0, 600], [1, 0.15]);
+
   return (
     <section className="hero" id="top">
       {/* 1. Hero Info */}
@@ -29,8 +34,14 @@ export default function Hero() {
         <span className="heroLocation">RANCHI, INDIA</span>
       </motion.div>
 
-      {/* 2. Giant Editorial WordMask Titles */}
-      <div className="nameWrapper">
+      {/* 2. Giant Editorial WordMask Titles with subtle scroll parallax & fade */}
+      <motion.div
+        className="nameWrapper"
+        style={{
+          y: heroNameY,
+          opacity: heroOpacity,
+        }}
+      >
         <div className="nameLine">
           <div className="wordMask">
             <motion.h1
@@ -74,7 +85,7 @@ export default function Hero() {
             </motion.h1>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* 3. Hero Bottom with breathing arrow */}
       <motion.div
